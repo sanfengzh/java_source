@@ -182,9 +182,19 @@ public abstract class Buffer {
         Spliterator.SIZED | Spliterator.SUBSIZED | Spliterator.ORDERED;
 
     // Invariants: mark <= position <= limit <= capacity
+    // 标记 通过#mark()方法，记录当前position，通过reset()方法恢复position为标记
+    // 写模式下，标记上一次写位置
+    // 读模式下，标记上一次读位置
     private int mark = -1;
+    // 位置，初始值为0
+    // 写模式下，每向Buffer中写入一个值，position就自动加1，代表下一次的写入位置
+    // 读模式下，每从Buffer中读取一个值，position就自动加1，代表下一次的读取配置
     private int position = 0;
+    // 上限
+    // 写模式下，代表最大能写入的数据上限位置，这时候limit等于capacity
+    // 读模式下，在Buffer完成所有数据写入后，通过调用#flip()方法，切换到读模式，此时，limit等于Buffer中实际的数据大小。因为Buffer不一定被写满，所以不能使用capacity作为实际的数据大小。
     private int limit;
+    // 容量，Buffer能容纳的数据元素的最大值。这个容量在Buffer创建时赋值，并且永远不能被修改
     private int capacity;
 
     // Used only by direct buffers
